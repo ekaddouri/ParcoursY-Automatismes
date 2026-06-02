@@ -481,19 +481,21 @@ statement:`Un appartement a : salon 5m×4m, cuisine 3m×3m, chambre 4m×3,5m, SD
 hints:["Aire rectangle = L×l pour chaque pièce.","Additionne toutes les aires.","Coût = surface × prix au m²."],
 correction:["Salon:20, Cuisine:9, Chambre:14, SDB:5, Couloir:6 m²","Total = <strong>54 m²</strong>","54 × 25 = <strong>1 350 €</strong>"]}
 ]},
-// THEME 5
-{id:"t5",title:"Statistiques & Probabilités",icon:"📊",color:"var(--t5)",bg:"var(--t5-bg)",border:"var(--t5-border)",
-subtitle:"Analyser des données, évaluer des risques",
-objectif:"Savoir calculer une moyenne pondérée, une médiane, interpréter un diagramme et calculer une probabilité simple.",
-bts:{savoir:'<strong>Calculer</strong> moyenne pondérée, médiane, étendue. <strong>Lire</strong> un diagramme. <strong>Calculer</strong> une probabilité simple.',pourquoi:'<strong>Contrôle qualité, gestion de chantier :</strong> en BTS, tu analyseras des données de production, des délais, des coûts, et évalueras des probabilités de risques.',erreurs:'<strong>Confondre moyenne et médiane.</strong> Oublier de pondérer les notes par les coefficients. Calculer P(A∪B) sans vérifier si les événements sont incompatibles.'},
+{id:"t5",title:"Statistiques à 1 et 2 variables",icon:"📊",color:"var(--t5)",bg:"var(--t5-bg)",border:"var(--t5-border)",
+subtitle:"Analyser des données et faire des prévisions",
+objectif:"Savoir calculer les indicateurs de base et réaliser un ajustement affine pour prévoir des données.",
+bts:{savoir:'<strong>Calculer</strong> moyenne, médiane. <strong>Réaliser</strong> un ajustement affine (nuage de points, équation y=ax+b, coefficient R²).',pourquoi:'<strong>Étude de prix, prévisions :</strong> en BTS, tu évalueras l\'évolution des coûts des matériaux ou prévoiras des temps de main d\'œuvre.',erreurs:'<strong>Confondre x et y</strong> dans l\'équation. Oublier de vérifier le R² avant de faire une prévision.'},
 course:`<h3><span class="icon">📊</span> Rappels de cours</h3><div class="course-content">
-<p><strong>Moyenne pondérée :</strong></p>
+<p><strong>Statistiques à 1 variable :</strong></p>
 <div class="formula-box">\\(\\bar{x}=\\frac{\\sum n_i x_i}{\\sum n_i}\\)</div>
-<p><strong>Médiane :</strong> Valeur qui partage la série en deux groupes de même effectif.</p>
-<p><strong>Probabilité :</strong></p>
-<div class="formula-box">\\(P(A)=\\frac{\\text{Nombre de cas favorables}}{\\text{Nombre de cas possibles}}\\)</div>
-<p><strong>Événement contraire :</strong> \\(P(\\bar{A})=1-P(A)\\)</p>
-<div class="key-point tip">💡 Les stats servent en BTS pour analyser les coûts, délais, contrôles qualité…</div></div>`,
+<p><strong>Médiane :</strong> Partage la série ordonnée en deux groupes de même effectif.</p>
+<p><strong>Statistiques à 2 variables (Ajustement affine) :</strong></p>
+<ul>
+<li><strong>Point moyen :</strong> \\(G(\\bar{x} ; \\bar{y})\\)</li>
+<li><strong>Droite d'ajustement :</strong> \\(y = ax + b\\) (par la calculatrice)</li>
+<li><strong>Coefficient de détermination :</strong> \\(R^2\\). Si \\(R^2 > 0,9\\), l'ajustement est fiable.</li>
+</ul>
+<div class="key-point tip">💡 La droite d'ajustement sert à estimer une valeur future (ex: prix d'un matériau dans 2 ans).</div></div>`,
 exercises:[
 {n:1,title:"Moyenne simple et pondérée",difficulty:1,type:"echauffement",
 statement:`Les notes d'un élève (coeff) : Maths 12 (3), Physique 14 (2), Techno 16 (4), Français 10 (1).<ol><li>Calcule la moyenne pondérée.</li></ol>`,
@@ -508,110 +510,90 @@ statement:`Deux fournisseurs livrent du béton. Délais (jours) :<br>A : 3, 4, 5
 hints:["Étendue = max − min.","Moyenne : somme ÷ nombre de valeurs.","Le plus fiable a la plus petite étendue."],
 correction:["A : moy=5, étendue=4. B : moy=5, étendue=6.","<strong>A est plus fiable</strong> : même moyenne mais moins de dispersion."]},
 {n:4,title:"Lecture de diagrammes",difficulty:1,type:"applique",
-statement:`Un diagramme circulaire des dépenses d'un chantier montre : Matériaux 40%, Main d'œuvre 35%, Location 15%, Divers 10%. Budget total : 80 000 €.<ol><li>Calcule le montant de chaque poste.</li><li>Quel angle correspond à chaque secteur ?</li></ol>`,
-hints:["Montant = % × total.","Angle = % × 360°.","40% × 360° = ?"],
-correction:["Mat:32000€, MO:28000€, Loc:12000€, Div:8000€","Mat:144°, MO:126°, Loc:54°, Div:36°"],
-svg:`<div class="graph-container"><svg viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg">
-  <rect x="0" y="0" width="500" height="350" fill="#1a1d27" stroke="#2a2d3a" stroke-width="1"/>
-  <defs>
-    <pattern id="t5e4g" width="20" height="20" patternUnits="userSpaceOnUse">
-      <line x1="20" y1="0" x2="20" y2="350" stroke="rgba(42,45,58,0.6)" stroke-width="0.5"/>
-      <line x1="0" y1="20" x2="500" y2="20" stroke="rgba(42,45,58,0.6)" stroke-width="0.5"/>
-    </pattern>
-  </defs>
-  <rect x="0" y="0" width="500" height="350" fill="url(#t5e4g)"/>
-  <text x="125" y="25" fill="#e8eaf0" font-size="14" font-family="Inter,sans-serif" font-weight="bold">Budget chantier : 80 000 €</text>
-  <path d="M250,170 L250,50 A120,120 0 0,1 320.5,267.1 Z" fill="#f43f5e" stroke="#1a1d27" stroke-width="2"/>
-  <path d="M250,170 L320.5,267.1 A120,120 0 0,1 130,170 Z" fill="#fb7185" stroke="#1a1d27" stroke-width="2"/>
-  <path d="M250,170 L130,170 A120,120 0 0,1 179.5,72.9 Z" fill="#fda4af" stroke="#1a1d27" stroke-width="2"/>
-  <path d="M250,170 L179.5,72.9 A120,120 0 0,1 250,50 Z" fill="#fecdd3" stroke="#1a1d27" stroke-width="2"/>
-  <circle cx="250" cy="170" r="3" fill="#e8eaf0"/>
-  <rect x="360" y="80" width="12" height="12" fill="#f43f5e" rx="2"/>
-  <text x="378" y="91" fill="#e8eaf0" font-size="11" font-family="Inter,sans-serif">Matériaux 40% — 32 000€</text>
-  <rect x="360" y="110" width="12" height="12" fill="#fb7185" rx="2"/>
-  <text x="378" y="121" fill="#e8eaf0" font-size="11" font-family="Inter,sans-serif">Main d'œuvre 35% — 28 000€</text>
-  <rect x="360" y="140" width="12" height="12" fill="#fda4af" rx="2"/>
-  <text x="378" y="151" fill="#e8eaf0" font-size="11" font-family="Inter,sans-serif">Location 15% — 12 000€</text>
-  <rect x="360" y="170" width="12" height="12" fill="#fecdd3" rx="2"/>
-  <text x="378" y="181" fill="#e8eaf0" font-size="11" font-family="Inter,sans-serif">Divers 10% — 8 000€</text>
-  <text x="265" y="100" fill="#fff" font-size="11" font-family="Inter,sans-serif" font-weight="bold">40%</text>
-  <text x="200" y="265" fill="#e8eaf0" font-size="11" font-family="Inter,sans-serif" font-weight="bold">35%</text>
-  <text x="140" y="130" fill="#e8eaf0" font-size="11" font-family="Inter,sans-serif" font-weight="bold">15%</text>
-  <text x="200" y="65" fill="#e8eaf0" font-size="11" font-family="Inter,sans-serif" font-weight="bold">10%</text>
-</svg></div>`},
+statement:`Un diagramme circulaire des dépenses d'un chantier montre : Matériaux 40%, Main d'œuvre 35%, Location 15%, Divers 10%. Budget total : 80 000 €.<ol><li>Calcule le montant de chaque poste.</li></ol>`,
+hints:["Montant = % × total."],
+correction:["Mat:32000€, MO:28000€, Loc:12000€, Div:8000€"]},
 {n:5,title:"Fréquences cumulées",difficulty:2,type:"automatisme",
-statement:`Notes d'un contrôle : [0;5[:2, [5;10[:5, [10;15[:8, [15;20]:5. Total=20.<ol><li>Calcule les fréquences en %.</li><li>Calcule les fréquences cumulées croissantes.</li><li>Quel % d'élèves a moins de 10 ?</li></ol>`,
-hints:["Fréquence = effectif/total × 100.","Cumul : additionne les fréquences au fur et à mesure.","Cumul de [0;5[ + [5;10[ = ?"],
-correction:["10%, 25%, 40%, 25%","10%, 35%, 75%, 100%","<strong>35%</strong> ont moins de 10."]},
-{n:6,title:"Probabilité simple",difficulty:1,type:"echauffement",
-statement:`Un sac contient 4 billes rouges, 3 bleues, 2 vertes, 1 jaune.<ol><li>Quelle est la probabilité de tirer une bille rouge ?</li><li>Une bille qui n'est pas verte ?</li><li>Une bille rouge ou bleue ?</li></ol>`,
-hints:["P = cas favorables / cas possibles. Total = 10.","P(pas verte) = 1 − P(verte).","P(R ou B) = P(R) + P(B)."],
-correction:["P(R) = 4/10 = <strong>2/5</strong>","P(pas verte) = 1−2/10 = <strong>4/5</strong>","P(R ou B) = 7/10 = <strong>0,7</strong>"]},
-{n:7,title:"Événement contraire",difficulty:1,type:"automatisme",
-statement:`La probabilité qu'une livraison arrive à l'heure est 0,85.<ol><li>Quelle est la probabilité qu'elle soit en retard ?</li><li>Sur 20 livraisons, combien peut-on attendre en retard ?</li></ol>`,
-hints:["P(retard) = 1 − P(à l'heure).","Nombre attendu = probabilité × nombre total."],
-correction:["P(retard) = 1−0,85 = <strong>0,15</strong>","20 × 0,15 = <strong>3 livraisons</strong>"]},
-{n:8,title:"Tableau à double entrée",difficulty:2,type:"automatisme",
-statement:`120 ouvriers : 50 maçons (40 avec permis), 70 électriciens (45 avec permis).<ol><li>Complète le tableau.</li><li>P(maçon) ?</li><li>P(permis sachant maçon) ?</li></ol>`,
-hints:["Maçons sans permis = 50−40.","P(maçon) = 50/120.","P(permis|maçon) = 40/50."],
-correction:["Sans permis : maçons 10, élec 25, total 35","P(maçon) = 50/120 ≈ <strong>0,417</strong>","P(permis|maçon) = 40/50 = <strong>0,8</strong>"]},
-{n:9,title:"Arbre de probabilités",difficulty:2,type:"prepa-bts",
-statement:`Un contrôle qualité : 90% des pièces sont conformes. Parmi les conformes, 95% passent le test. Parmi les non-conformes, 20% passent quand même.<ol><li>Construis l'arbre.</li><li>P(conforme ET passe) ?</li><li>P(passe le test) ?</li></ol>`,
-hints:["Branche 1 : conforme (0,9) puis passe (0,95) ou non.","Branche 2 : non conforme (0,1) puis passe (0,2) ou non.","Multiplie le long des branches."],
-correction:["P(C∩P) = 0,9×0,95 = <strong>0,855</strong>","P(P) = 0,9×0,95 + 0,1×0,20 = 0,855+0,02 = <strong>0,875</strong>"],
-svg:`<div class="graph-container"><svg viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg">
-  <rect x="0" y="0" width="500" height="350" fill="#1a1d27" stroke="#2a2d3a" stroke-width="1"/>
-  <defs>
-    <pattern id="t5e9g" width="20" height="20" patternUnits="userSpaceOnUse">
-      <line x1="20" y1="0" x2="20" y2="350" stroke="rgba(42,45,58,0.6)" stroke-width="0.5"/>
-      <line x1="0" y1="20" x2="500" y2="20" stroke="rgba(42,45,58,0.6)" stroke-width="0.5"/>
-    </pattern>
-    <marker id="t5e9arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-      <path d="M0,0 L10,5 L0,10" fill="#e8eaf0" stroke="none"/>
-    </marker>
-  </defs>
-  <rect x="0" y="0" width="500" height="350" fill="url(#t5e9g)"/>
-  <text x="140" y="25" fill="#e8eaf0" font-size="14" font-family="Inter,sans-serif" font-weight="bold">Arbre de probabilites pondere</text>
-  <circle cx="60" cy="175" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
-  <text x="45" y="193" fill="#e8eaf0" font-size="12" font-family="Inter,sans-serif" font-weight="bold">Depart</text>
-  <line x1="64" y1="175" x2="220" y2="100" stroke="#e8eaf0" stroke-width="2" marker-end="url(#t5e9arr)"/>
-  <circle cx="220" cy="100" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
-  <text x="115" y="120" fill="#e8eaf0" font-size="12" font-family="Inter,sans-serif">Conforme</text>
-  <text x="125" y="138" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">(0,9)</text>
-  <line x1="64" y1="175" x2="220" y2="250" stroke="#e8eaf0" stroke-width="2" marker-end="url(#t5e9arr)"/>
-  <circle cx="220" cy="250" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
-  <text x="105" y="255" fill="#e8eaf0" font-size="12" font-family="Inter,sans-serif">Non conforme</text>
-  <text x="108" y="270" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">(0,1)</text>
-  <line x1="224" y1="100" x2="380" y2="50" stroke="#10b981" stroke-width="2" marker-end="url(#t5e9arr)"/>
-  <circle cx="380" cy="50" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
-  <text x="278" y="55" fill="#10b981" font-size="12" font-family="Inter,sans-serif">Passe</text>
-  <text x="295" y="75" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">(0,95)</text>
-  <line x1="224" y1="100" x2="380" y2="150" stroke="#f43f5e" stroke-width="2" marker-end="url(#t5e9arr)"/>
-  <circle cx="380" cy="150" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
-  <text x="273" y="150" fill="#f43f5e" font-size="12" font-family="Inter,sans-serif">Ne passe pas</text>
-  <text x="273" y="168" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">(0,05)</text>
-  <line x1="224" y1="250" x2="380" y2="200" stroke="#10b981" stroke-width="2" marker-end="url(#t5e9arr)"/>
-  <circle cx="380" cy="200" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
-  <text x="278" y="210" fill="#10b981" font-size="12" font-family="Inter,sans-serif">Passe</text>
-  <text x="295" y="228" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">(0,20)</text>
-  <line x1="224" y1="250" x2="380" y2="300" stroke="#f43f5e" stroke-width="2" marker-end="url(#t5e9arr)"/>
-  <circle cx="380" cy="300" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
-  <text x="273" y="303" fill="#f43f5e" font-size="12" font-family="Inter,sans-serif">Ne passe pas</text>
-  <text x="273" y="321" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">(0,80)</text>
-  <text x="400" y="45" fill="#e8eaf0" font-size="12" font-family="Inter,sans-serif" font-weight="bold">C ∩ P</text>
-  <text x="400" y="60" fill="#8b8fa3" font-size="12" font-family="Inter,sans-serif">0,855</text>
-  <text x="400" y="145" fill="#e8eaf0" font-size="12" font-family="Inter,sans-serif" font-weight="bold">C ∩ P̅</text>
-  <text x="400" y="160" fill="#8b8fa3" font-size="12" font-family="Inter,sans-serif">0,045</text>
-  <text x="400" y="195" fill="#e8eaf0" font-size="12" font-family="Inter,sans-serif" font-weight="bold">C̅ ∩ P</text>
-  <text x="400" y="210" fill="#8b8fa3" font-size="12" font-family="Inter,sans-serif">0,020</text>
-  <text x="400" y="295" fill="#e8eaf0" font-size="12" font-family="Inter,sans-serif" font-weight="bold">C̅ ∩ P̅</text>
-  <text x="400" y="310" fill="#8b8fa3" font-size="12" font-family="Inter,sans-serif">0,080</text>
-  <rect x="50" y="320" width="110" height="25" fill="none" stroke="#e8eaf0" stroke-width="1.5" rx="4"/>
-  <text x="62" y="337" fill="#e8eaf0" font-size="13" font-family="Inter,sans-serif" font-weight="bold">Total = 1</text>
-</svg></div>`},
-{n:10,title:"Statistiques de chantier",difficulty:2,type:"applique",
-statement:`Durées de 10 chantiers (semaines) : 8,10,10,12,14,14,14,16,18,24.<ol><li>Calcule la moyenne.</li><li>Calcule la médiane.</li><li>Quel indicateur est le plus représentatif ici ? Pourquoi ?</li></ol>`,
-hints:["Moyenne = somme/10.","Médiane = moyenne des 5e et 6e valeurs.","Le 24 est une valeur extrême…"],
-correction:["Moyenne = 140/10 = <strong>14 semaines</strong>","Médiane = (14+14)/2 = <strong>14 semaines</strong>","Ici les deux coïncident, mais la <strong>médiane</strong> est plus robuste face à la valeur extrême 24."]}
+statement:`Notes d'un contrôle : [0;5[:2, [5;10[:5, [10;15[:8, [15;20]:5. Total=20.<ol><li>Calcule les fréquences en %.</li><li>Quel % d'élèves a moins de 10 ?</li></ol>`,
+hints:["Fréquence = effectif/total × 100.","Cumul de [0;5[ + [5;10["],
+correction:["10%, 25%, 40%, 25%","<strong>35%</strong> ont moins de 10."]},
+{n:6,title:"Point moyen (Stat 2 variables)",difficulty:1,type:"echauffement",
+statement:`Évolution du prix d'un matériau :<br>Année (x) : 1, 2, 3, 4<br>Prix en € (y) : 10, 12, 15, 17<ol><li>Calcule les coordonnées du point moyen \\(G(\\bar{x} ; \\bar{y})\\).</li></ol>`,
+hints:["\\(\\bar{x}\\) est la moyenne des x.","\\(\\bar{y}\\) est la moyenne des y."],
+correction:["\\(\\bar{x} = (1+2+3+4)/4 = 2{,}5\\)","\\(\\bar{y} = (10+12+15+17)/4 = 13{,}5\\)","<strong>G(2,5 ; 13,5)</strong>"]},
+{n:7,title:"Ajustement affine (calculatrice)",difficulty:2,type:"automatisme",
+statement:`À la calculatrice, détermine l'équation de la droite d'ajustement \\(y=ax+b\\) pour les données suivantes :<br>x (mois) : 1, 2, 3, 4, 5<br>y (ventes) : 12, 15, 18, 22, 24`,
+hints:["Entre les x en L1 et les y en L2.","Utilise le menu STAT > CALC > LinReg(ax+b)."],
+correction:["\\(a = 3{,}1\\) et \\(b = 8{,}9\\)","Équation : <strong>\\(y = 3{,}1x + 8{,}9\\)</strong>"]},
+{n:8,title:"Coefficient de détermination",difficulty:2,type:"applique",
+statement:`Pour un ajustement, la calculatrice donne \\(r = 0{,}98\\).<ol><li>Calcule le coefficient de détermination \\(R^2\\).</li><li>L'ajustement est-il pertinent ?</li></ol>`,
+hints:["\\(R^2 = r \\times r\\)","Compare à 0,9."],
+correction:["\\(R^2 = 0{,}98^2 \\approx 0{,}96\\)","Puisque \\(0{,}96 > 0{,}9\\), l'ajustement affine est <strong>très pertinent</strong>."]},
+{n:9,title:"Prévision grâce à l'ajustement",difficulty:2,type:"prepa-bts",
+statement:`La droite d'ajustement du coût d'un chantier en fonction de sa durée en mois (x) est : \\(y = 1500x + 3200\\).<ol><li>Estime le coût pour un chantier de 8 mois.</li><li>Au bout de combien de mois le coût dépassera-t-il 20 000 € ?</li></ol>`,
+hints:["Remplace x par 8.","Résous \\(1500x + 3200 > 20000\\)."],
+correction:["\\(y = 1500(8) + 3200 = 15200\\) €","\\(1500x > 16800 \\implies x > 11{,}2\\). Donc au bout de <strong>12 mois</strong>."]},
+{n:10,title:"Problème complet : Nuage et droite",difficulty:3,type:"synthese",
+statement:`On étudie le temps de séchage (y) en fonction de l'épaisseur du mortier (x).<br>x (mm) : 10, 20, 30<br>y (h) : 24, 45, 68<ol><li>Détermine l'équation de la droite d'ajustement.</li><li>Estime le temps de séchage pour 50 mm.</li></ol>`,
+hints:["Mode STAT de la calculatrice.","Remplace x par 50 dans l'équation trouvée."],
+correction:["\\(a = 2{,}2\\) et \\(b = 1{,}67\\) → <strong>\\(y = 2{,}2x + 1{,}67\\)</strong>","\\(y = 2{,}2(50) + 1{,}67 = \\textbf{111,67 h}\\)"]}
+]},
+// THEME 6
+{id:"t6",title:"Probabilités",icon:"🎲",color:"var(--t6)",bg:"var(--t6-bg)",border:"var(--t6-border)",
+subtitle:"Évaluer et quantifier les risques",
+objectif:"Maîtriser le calcul de probabilités, les intersections, réunions, probabilités conditionnelles et les arbres pondérés.",
+bts:{savoir:'<strong>Calculer</strong> P(A∩B), P(A∪B) et une probabilité conditionnelle. <strong>Construire</strong> un arbre pondéré.',pourquoi:'<strong>Sécurité, contrôle qualité :</strong> en BTS, on évalue la probabilité qu\'une pièce soit défectueuse ou qu\'un incident survienne en croisant plusieurs critères.',erreurs:'<strong>Somme des branches > 1.</strong> Confondre P(A∩B) et P_A(B). Oublier de soustraire l\'intersection dans la formule de P(A∪B).'},
+course:`<h3><span class="icon">🎲</span> Rappels de cours</h3><div class="course-content">
+<p><strong>Probabilité simple :</strong> \\(P(A) = \\frac{\\text{cas favorables}}{\\text{cas possibles}}\\) ; \\(P(\\bar{A}) = 1 - P(A)\\)</p>
+<p><strong>Intersection (ET) et Réunion (OU) :</strong></p>
+<div class="formula-box">\\(P(A \\cup B) = P(A) + P(B) - P(A \\cap B)\\)</div>
+<p><strong>Probabilité conditionnelle :</strong> Probabilité de B sachant que A est réalisé.</p>
+<div class="formula-box">\\(P_A(B) = \\frac{P(A \\cap B)}{P(A)}\\)</div>
+<p><strong>Arbre pondéré :</strong><br>
+- La somme des probabilités des branches issues d'un même nœud vaut 1.<br>
+- Probabilité d'un chemin (Intersection) : \\(P(A \\cap B) = P(A) \\times P_A(B)\\).</p>
+</div>`,
+exercises:[
+{n:1,title:"Probabilité simple",difficulty:1,type:"echauffement",
+statement:`Un lot de 50 parpaings contient 3 parpaings fissurés.<ol><li>Quelle est la probabilité de tirer un parpaing fissuré ?</li><li>Un parpaing intact ?</li></ol>`,
+hints:["P = cas favorables / cas possibles.","Intact = événement contraire."],
+correction:["P(fissuré) = 3/50 = <strong>0,06</strong>","P(intact) = 1 − 0,06 = <strong>0,94</strong>"]},
+{n:2,title:"Tableau à double entrée",difficulty:2,type:"automatisme",
+statement:`100 fenêtres produites. 60 sont en PVC (dont 5 défectueuses), 40 en Alu (dont 2 défectueuses).<ol><li>P(PVC) ?</li><li>P(Défectueuse sachant Alu) ?</li></ol>`,
+hints:["Total PVC / Total général.","Parmi les 40 Alu, combien sont défectueuses ?"],
+correction:["P(PVC) = 60/100 = <strong>0,6</strong>","P_Alu(Déf) = 2/40 = <strong>0,05</strong>"]},
+{n:3,title:"Intersection et Réunion",difficulty:2,type:"automatisme",
+statement:`Soit P(A) = 0,4 ; P(B) = 0,5 ; P(A ∩ B) = 0,15.<ol><li>Que représente A ∩ B ?</li><li>Calcule P(A ∪ B).</li></ol>`,
+hints:["∩ signifie ET (les deux en même temps).","Applique la formule du cours pour la réunion."],
+correction:["A ∩ B = Événements A <strong>ET</strong> B réalisés en même temps.","P(A ∪ B) = 0,4 + 0,5 − 0,15 = <strong>0,75</strong>"]},
+{n:4,title:"Probabilité conditionnelle",difficulty:2,type:"applique",
+statement:`Sur un chantier, la probabilité d'avoir du retard (R) est de 0,3. Si on a du retard, la probabilité d'avoir des pénalités (P) est de 0,8.<ol><li>Écris la probabilité conditionnelle donnée.</li><li>Calcule P(R ∩ P).</li></ol>`,
+hints:["P(P sachant R) = 0,8.","P(R ∩ P) = P(R) × P_R(P)."],
+correction:["\\(P_R(P) = 0{,}8\\)","\\(P(R \\cap P) = 0{,}3 \\times 0{,}8 = \\textbf{0,24}\\)"]},
+{n:5,title:"Construction d'un arbre",difficulty:2,type:"automatisme",
+statement:`Un ouvrier vient en voiture (0,6) ou en bus (0,4).<br>En voiture, il est en retard avec une probabilité de 0,1.<br>En bus, il est en retard avec une probabilité de 0,2.<ol><li>Construis l'arbre.</li><li>Quelle est la probabilité d'être à l'heure sachant qu'il prend le bus ?</li></ol>`,
+hints:["Deux branches au départ, puis deux sous-branches.","L'heure est l'événement contraire du retard."],
+correction:["(Arbre tracé au brouillon)","P_Bus(Heure) = 1 − 0,2 = <strong>0,8</strong>"]},
+{n:6,title:"Lecture d'un arbre pondéré",difficulty:2,type:"applique",
+statement:`Dans un arbre, la première branche va vers A (0,7). De A, on va vers B (0,9).<ol><li>Calcule la probabilité du chemin (A ∩ B).</li><li>Calcule P(A ∩ B barre).</li></ol>`,
+hints:["Multiplie les probabilités du chemin.","Branche vers B barre = 1 − 0,9 = 0,1."],
+correction:["P(A ∩ B) = 0,7 × 0,9 = <strong>0,63</strong>","P(A ∩ B̅) = 0,7 × 0,1 = <strong>0,07</strong>"]},
+{n:7,title:"Probabilités totales",difficulty:3,type:"prepa-bts",
+statement:`Suite de l'exercice 5. L'ouvrier prend la voiture (0,6, retard 0,1) ou le bus (0,4, retard 0,2).<ol><li>Calcule la probabilité totale qu'il soit en retard P(R).</li></ol>`,
+hints:["Le retard peut arriver en voiture OU en bus. Additionne les deux chemins de retard."],
+correction:["P(R) = P(Voiture ∩ Retard) + P(Bus ∩ Retard)","P(R) = (0,6 × 0,1) + (0,4 × 0,2) = 0,06 + 0,08 = <strong>0,14</strong>"]},
+{n:8,title:"Inverser une condition",difficulty:3,type:"synthese",
+statement:`On sait que P(R) = 0,14 (exercice précédent). Sachant qu'il est en retard, quelle est la probabilité qu'il ait pris le bus ?`,
+hints:["On cherche P_R(Bus). Utilise la formule : P(Bus ∩ R) / P(R)."],
+correction:["\\(P_R(\\text{Bus}) = \\frac{P(\\text{Bus} \\cap R)}{P(R)}\\)","\\(= \\frac{0{,}08}{0{,}14} \\approx \\textbf{0,571}\\)"]},
+{n:9,title:"Indépendance",difficulty:2,type:"prepa-bts",
+statement:`Deux événements A et B sont indépendants si P(A ∩ B) = P(A) × P(B).<br>On donne P(A) = 0,4, P(B) = 0,3 et P(A ∩ B) = 0,12.<ol><li>A et B sont-ils indépendants ?</li></ol>`,
+hints:["Vérifie si 0,4 × 0,3 est égal à 0,12."],
+correction:["P(A) × P(B) = 0,4 × 0,3 = 0,12.","Comme P(A ∩ B) = 0,12, les événements <strong>sont indépendants</strong>."]},
+{n:10,title:"Arbre pondéré visuel",difficulty:2,type:"synthese",
+statement:`Soit un test de qualité : 80% des pièces sont issues de la machine A, 20% de la B. Defectuosité : A (2%), B (5%).<ol><li>Calcule la probabilité qu'une pièce soit de A ET défectueuse.</li><li>Probabilité totale qu'elle soit défectueuse ?</li></ol>`,
+hints:["P(A ∩ Déf) = P(A) × P_A(Déf)","Ajoute P(B ∩ Déf) pour le total."],
+correction:["P(A ∩ Déf) = 0,80 × 0,02 = <strong>0,016</strong>","P(Déf) = 0,016 + (0,20 × 0,05) = 0,016 + 0,010 = <strong>0,026</strong>"]
+}
 ]}
 );

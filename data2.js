@@ -198,7 +198,7 @@ svg:`<div class="graph-container"><svg viewBox="0 0 500 350" xmlns="http://www.w
   <text x="345" y="71" fill="#10b981" font-size="11" font-family="Inter,sans-serif">R(x) = 80x</text>
   <circle cx="265.15" cy="121.67" r="4" fill="#f97316"/>
   <text x="240" y="115" fill="#f97316" font-size="9" font-family="Inter,sans-serif">≈6,7</text>
-</svg></div>\`}
+</svg></div>`}
 ]},
 // THEME 4
 {id:"t4",title:"Géométrie & Mesures",icon:"📐",color:"var(--t4)",bg:"var(--t4-bg)",border:"var(--t4-border)",

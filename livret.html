@@ -14,8 +14,47 @@
 <body>
 
 <div class="app" id="app">
-  <!-- HERO -->
-  <header class="hero">
+  <!-- ACCESSIBILITY BAR -->
+  <div class="access-bar no-print" role="toolbar" aria-label="Barre d'accessibilité">
+    <div class="ab-group">
+      <span class="ab-label">Affichage</span>
+      <button class="ab-proj" onclick="toggleProjection(this)" title="Mode vidéoprojecteur">🖥 Projection</button>
+      <button onclick="cycleTheme(this)" id="themeBtn">Thème sombre</button>
+    </div>
+    <div class="ab-sep"></div>
+    <div class="ab-group">
+      <span class="ab-label">Texte</span>
+      <button onclick="setFontSize(-1)" title="Diminuer la taille">A−</button>
+      <span id="fontSizeLabel" style="color:var(--text-muted);font-size:0.75rem;min-width:32px;text-align:center">15px</span>
+      <button onclick="setFontSize(1)" title="Augmenter la taille">A+</button>
+    </div>
+    <div class="ab-sep"></div>
+    <div class="ab-group">
+      <button class="ab-dys" onclick="toggleDys(this)" title="Police adaptée Dys">📖 Mode Dys</button>
+    </div>
+    <div class="ab-sep"></div>
+    <div class="ab-group">
+      <button onclick="resetProgress()" title="Réinitialiser la progression">🔄 Réinitialiser</button>
+      <button onclick="exportPDF()" title="Exporter en PDF via l'impression">📄 Exporter</button>
+    </div>
+  </div>
+
+  <!-- NAV BREADCRUMB -->
+  <nav class="nav-sticky" id="nav" role="navigation" aria-label="Fil d'ariane">
+    <div class="nav-inner" id="navInner"></div>
+  </nav>
+
+  <!-- PROGRESS GLOBAL -->
+  <div class="progress-global" id="progressGlobalWrap">
+    <div class="progress-global-inner">
+      <span class="progress-label">Progression globale</span>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+      <span class="progress-pct" id="globalPct">0%</span>
+    </div>
+  </div>
+
+  <!-- HERO (affiché uniquement sur l'accueil) -->
+  <header class="hero" id="hero">
     <div class="hero-bg-shapes">
       <div class="shape shape-1"></div>
       <div class="shape shape-2"></div>
@@ -24,32 +63,30 @@
     <div class="hero-content">
       <div class="hero-badge"><span class="badge-dot"></span>Terminale Bac Pro Bâtiment</div>
       <h1>Livret d'Automatismes<br><span class="hero-sub">Mathématiques — Préparation BTS</span></h1>
-      <p class="hero-desc">Consolider tes acquis en mathématiques pour réussir ta poursuite d'études. 5 thèmes • 50 exercices • Coups de pouce progressifs.</p>
-      <div class="hero-stats" id="heroStats"></div>
+      <p class="hero-desc">Consolider tes acquis en mathématiques pour réussir ta poursuite d'études en BTS Bâtiment. 5 thèmes • 50 exercices progressifs • Coups de pouce • Corrections détaillées.</p>
+      
+      <div id="heroMsg" class="hero-msg"></div>
+
+      <!-- DIAGNOSTIC RAPIDE -->
+      <div class="hero-diagnostic" id="heroDiagnostic">
+        <p class="hero-desc" style="margin-top:20px;font-weight:600">Avant de commencer, choisis ton objectif :</p>
+        <div class="diag-btns">
+          <button class="diag-btn" onclick="setDiagnostic('revision')">📘 Réviser les bases</button>
+          <button class="diag-btn" onclick="setDiagnostic('entrainement')">📝 M'entraîner pour le BTS</button>
+          <button class="diag-btn" onclick="setDiagnostic('')">🚀 Aller directement aux exercices</button>
+        </div>
+        <p class="hero-desc" style="margin-top:12px;font-size:0.85rem;color:var(--text-muted)" id="diagLabel"></p>
+      </div>
     </div>
   </header>
 
-  <!-- NAV -->
-  <nav class="nav-sticky" id="nav">
-    <div class="nav-inner" id="navInner"></div>
-  </nav>
-
-  <!-- PROGRESS BAR -->
-  <div class="progress-global">
-    <div class="progress-global-inner">
-      <span class="progress-label">Progression globale</span>
-      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
-      <span class="progress-pct" id="globalPct">0%</span>
-    </div>
-  </div>
-
-  <!-- MAIN CONTENT -->
+  <!-- MAIN CONTENT (contenu dynamique) -->
   <main class="main" id="mainContent"></main>
 
   <!-- FOOTER -->
   <footer class="footer">
     <p>Livret d'Automatismes — Bac Pro Bâtiment (ARCHIT · ERA · MAV)</p>
-    <p class="footer-small">Préparation à la poursuite d'études en BTS — Année 2025-2026</p>
+    <p class="footer-small">Préparation à la poursuite d'études en BTS — Année 2025-2026 — 100% hors-ligne</p>
   </footer>
 </div>
 

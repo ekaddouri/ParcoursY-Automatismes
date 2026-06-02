@@ -7,3 +7,12 @@ kilo.json
 Thumbs.db
 node_modules/
 .env
+
+# Temporary build files
+/Version_Eleves/build.ps1
+
+# Downloaded dependencies (not needed in repo - use CDN for GitHub version)
+fonts/
+katex.min.css
+katex.min.js
+auto-render.min.js

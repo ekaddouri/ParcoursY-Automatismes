@@ -595,10 +595,49 @@ statement:`Soit un test de qualité : 80% des pièces sont issues de la machine 
 hints:["P(A ∩ Déf) = P(A) × P_A(Déf)","Ajoute P(B ∩ Déf) pour le total."],
 correction:["P(A ∩ Déf) = 0,80 × 0,02 = <strong>0,016</strong>","P(Déf) = 0,016 + (0,20 × 0,05) = 0,016 + 0,010 = <strong>0,026</strong>"]
 },
-{n:11,title:"Exploitation complète d'un arbre",difficulty:3,type:"applique",
-statement:`Un constructeur se fournit en béton chez deux centrales : 70% chez "Béton Rapide" (BR) et 30% chez "Béton Plus" (BP).<br>Avec BR, 95% des livraisons sont à l'heure (H). Avec BP, 90% sont à l'heure.<ol><li>Complète l'arbre pondéré (au brouillon).</li><li>Calcule la probabilité que la livraison vienne de BR et soit en retard (\\(\\bar{H}\\)).</li><li>Calcule la probabilité totale d'être en retard.</li></ol>`,
-hints:["P(BR) = 0,7. P(H sachant BR) = 0,95 donc P(Retard sachant BR) = 0,05.","Chemin BR puis Retard : multiplie les probabilités.","Retard = (BR ∩ Retard) + (BP ∩ Retard)."],
-correction:["\\(P(\\text{BR} \\cap \\bar{H}) = 0{,}70 \\times 0{,}05 = \\textbf{0,035}\\)","\\(P(\\bar{H}) = (0{,}7 \\times 0{,}05) + (0{,}3 \\times 0{,}10) = 0{,}035 + 0{,}030 = \\textbf{0,065}\\)"]
+{n:11,title:"Exploitation d'un arbre de probabilités",difficulty:3,type:"applique",
+statement:`Un constructeur se fournit en béton chez deux centrales : "Béton Rapide" (BR) et "Béton Plus" (BP). Observe l'arbre ci-dessous.<ol><li>Calcule la probabilité que la livraison vienne de BR et soit en retard (\\(\\bar{H}\\)).</li><li>Calcule la probabilité totale d'être en retard.</li></ol>`,
+hints:["Chemin BR puis Retard : multiplie les probabilités.","Retard = (BR ∩ Retard) + (BP ∩ Retard)."],
+correction:["\\(P(\\text{BR} \\cap \\bar{H}) = 0{,}70 \\times 0{,}05 = \\textbf{0,035}\\)","\\(P(\\bar{H}) = (0{,}7 \\times 0{,}05) + (0{,}3 \\times 0{,}10) = 0{,}035 + 0{,}030 = \\textbf{0,065}\\)"],
+svg:`<div class="graph-container"><svg viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="500" height="350" fill="#1a1d27" stroke="#2a2d3a" stroke-width="1"/>
+  <defs>
+    <pattern id="t6e11g" width="20" height="20" patternUnits="userSpaceOnUse">
+      <line x1="20" y1="0" x2="20" y2="350" stroke="rgba(42,45,58,0.6)" stroke-width="0.5"/>
+      <line x1="0" y1="20" x2="500" y2="20" stroke="rgba(42,45,58,0.6)" stroke-width="0.5"/>
+    </pattern>
+    <marker id="t6e11arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10" fill="#e8eaf0" stroke="none"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="500" height="350" fill="url(#t6e11g)"/>
+  <text x="130" y="25" fill="#e8eaf0" font-size="14" font-family="Inter,sans-serif" font-weight="bold">Arbre pondere : Livraisons de beton</text>
+  <circle cx="60" cy="175" r="4" fill="#eab308" stroke="#eab308" stroke-width="2"/>
+  <line x1="64" y1="175" x2="220" y2="100" stroke="#e8eaf0" stroke-width="2" marker-end="url(#t6e11arr)"/>
+  <circle cx="220" cy="100" r="4" fill="#eab308" stroke="#eab308" stroke-width="2"/>
+  <text x="115" y="120" fill="#eab308" font-size="13" font-family="Inter,sans-serif">BR</text>
+  <text x="125" y="138" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">0,70</text>
+  <line x1="64" y1="175" x2="220" y2="250" stroke="#e8eaf0" stroke-width="2" marker-end="url(#t6e11arr)"/>
+  <circle cx="220" cy="250" r="4" fill="#eab308" stroke="#eab308" stroke-width="2"/>
+  <text x="115" y="255" fill="#eab308" font-size="13" font-family="Inter,sans-serif">BP</text>
+  <text x="125" y="270" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">0,30</text>
+  <line x1="224" y1="100" x2="380" y2="50" stroke="#10b981" stroke-width="2" marker-end="url(#t6e11arr)"/>
+  <circle cx="380" cy="50" r="4" fill="#10b981" stroke="#10b981" stroke-width="2"/>
+  <text x="278" y="55" fill="#10b981" font-size="13" font-family="Inter,sans-serif">H</text>
+  <text x="295" y="75" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">0,95</text>
+  <line x1="224" y1="100" x2="380" y2="150" stroke="#f43f5e" stroke-width="2" marker-end="url(#t6e11arr)"/>
+  <circle cx="380" cy="150" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
+  <text x="273" y="150" fill="#f43f5e" font-size="13" font-family="Inter,sans-serif">H barre</text>
+  <text x="295" y="168" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">0,05</text>
+  <line x1="224" y1="250" x2="380" y2="200" stroke="#10b981" stroke-width="2" marker-end="url(#t6e11arr)"/>
+  <circle cx="380" cy="200" r="4" fill="#10b981" stroke="#10b981" stroke-width="2"/>
+  <text x="278" y="210" fill="#10b981" font-size="13" font-family="Inter,sans-serif">H</text>
+  <text x="295" y="228" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">0,90</text>
+  <line x1="224" y1="250" x2="380" y2="300" stroke="#f43f5e" stroke-width="2" marker-end="url(#t6e11arr)"/>
+  <circle cx="380" cy="300" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
+  <text x="273" y="303" fill="#f43f5e" font-size="13" font-family="Inter,sans-serif">H barre</text>
+  <text x="295" y="321" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">0,10</text>
+</svg></div>`
 }
 ]}
 );

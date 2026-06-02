@@ -171,6 +171,18 @@ body.light-mode .hero h1, body.cream-mode .hero h1 { -webkit-text-fill-color:#1a
 .hero-stat .lbl { font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; }
 .hero-msg { margin-top:16px; padding:10px 18px; border-radius:var(--radius-sm); background:rgba(79,156,247,0.08); border:1px solid rgba(79,156,247,0.2); font-size:0.9rem; color:var(--text-muted); }
 
+.concepteur-text {
+  font-size: 8px;
+  font-weight: 700;
+  color: #ff4d4d; /* Rouge clair pour fond sombre */
+  margin-top: -12px;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+body.light-mode .concepteur-text, body.cream-mode .concepteur-text {
+  color: #d32f2f; /* Rouge foncé pour fond clair */
+}
+
 /* === NAV === */
 .nav-sticky { position:sticky; top:44px; z-index:100; background:rgba(15,17,23,0.85); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 40px; }
 body.light-mode .nav-sticky, body.cream-mode .nav-sticky { background:rgba(255,255,255,0.9); }
@@ -388,7 +400,7 @@ body.light-mode .graph-container svg, body.cream-mode .graph-container svg { bac
     <div class="hero-content">
       <div class="hero-badge"><span class="badge-dot"></span>Terminale Bac Pro Bâtiment</div>
       <h1>Livret d'Automatismes<br><span class="hero-sub">Mathématiques — Préparation BTS</span></h1>
-      <p style="font-size: 8px; color: red; opacity: 0.9; margin-top: -12px; margin-bottom: 20px; letter-spacing: 0.5px;">conçu à l'aide de l'IA par El. Kaddouri Alfred Sauvy 2026</p>
+      <p class="concepteur-text">conçu à l'aide de l'IA par El. Kaddouri Alfred Sauvy 2026</p>
       <p class="hero-desc">Consolider tes acquis en mathématiques pour réussir ta poursuite d'études en BTS Bâtiment. 5 thèmes • 50 exercices progressifs • Coups de pouce • Corrections détaillées.</p>
       
       <div id="heroMsg" class="hero-msg"></div>

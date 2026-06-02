@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hintsHTML = '<div class="hints-section">';
         exo.hints.forEach((h, i) => {
           const hid = `hint-${key}-${i}`;
-          const hintLabel = ['💡 Méthode', '⚠️ Erreur fréquente', '✅ Exemple proche'][i] || `💡 Aide ${i+1}`;
+          const hintLabel = `💡 Indice ${i+1}`;
           hintsHTML += `<button class="hint-btn" onclick="toggleHint(this,'${hid}')">${hintLabel}</button>`;
           hintsHTML += `<div class="hint-content" id="${hid}">${h}</div>`;
         });

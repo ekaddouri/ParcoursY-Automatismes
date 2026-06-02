@@ -1642,7 +1642,7 @@ function renderExerciseHTML(theme, exo) {
     hintsHTML += '<h4 style="margin-bottom:12px; color:var(--warning); font-size:1rem;">Besoin d\'un coup de pouce ?</h4>';
     exo.hints.forEach((h, i) => {
       const hid = `hint-${key}-${i}`;
-      const hintLabel = ['💡 Méthode', '⚠️ Erreur fréquente', '✅ Exemple proche'][i] || `💡 Indice ${i+1}`;
+      const hintLabel = `💡 Indice ${i+1}`;
       hintsHTML += `<button class="hint-btn" id="btn-${hid}" onclick="toggleHint(this,'${key}-${i}')" aria-expanded="false" aria-controls="${hid}">${hintLabel}</button>`;
       hintsHTML += `<div class="hint-content" id="${hid}" role="region" aria-labelledby="btn-${hid}">${h}</div>`;
     });

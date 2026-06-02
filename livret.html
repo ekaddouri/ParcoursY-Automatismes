@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Livret d'Automatismes — Bac Pro Bâtiment → BTS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge"><span class="badge-dot"></span>Terminale Bac Pro Bâtiment</div>
+      <h1>Livret d'Automatismes<br><span class="hero-sub">Mathématiques — Préparation BTS</span></h1>
+      <p class="hero-desc">Consolider tes acquis en mathématiques pour réussir ta poursuite d'études. 5 thèmes • 50 exercices • Coups de pouce progressifs.</p>
+      <div class="hero-stats" id="heroStats"></div>
+    </div>
+  </header>
+
+  <!-- NAV -->
+  <nav class="nav-sticky" id="nav">
+    <div class="nav-inner" id="navInner"></div>
+  </nav>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-global">
+    <div class="progress-global-inner">
+      <span class="progress-label">Progression globale</span>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+      <span class="progress-pct" id="globalPct">0%</span>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="mainContent"></main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>Livret d'Automatismes — Bac Pro Bâtiment (ARCHIT · ERA · MAV)</p>
+    <p class="footer-small">Préparation à la poursuite d'études en BTS — Année 2025-2026</p>
+  </footer>
+</div>
+
+<!-- PRINT BUTTON -->
+<button class="print-btn no-print" onclick="window.print()" title="Imprimer le livret">🖨️</button>
+
+<script src="data.js"></script>
+<script src="data2.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

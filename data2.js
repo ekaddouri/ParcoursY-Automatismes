@@ -627,7 +627,7 @@ svg:`<div class="graph-container"><svg viewBox="0 0 500 350" xmlns="http://www.w
   <text x="295" y="75" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">0,95</text>
   <line x1="224" y1="100" x2="380" y2="150" stroke="#f43f5e" stroke-width="2" marker-end="url(#t6e11arr)"/>
   <circle cx="380" cy="150" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
-  <text x="273" y="150" fill="#f43f5e" font-size="13" font-family="Inter,sans-serif">H barre</text>
+  <text x="278" y="150" fill="#f43f5e" font-size="13" font-family="Inter,sans-serif"><tspan text-decoration="overline">H</tspan></text>
   <text x="295" y="168" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">0,05</text>
   <line x1="224" y1="250" x2="380" y2="200" stroke="#10b981" stroke-width="2" marker-end="url(#t6e11arr)"/>
   <circle cx="380" cy="200" r="4" fill="#10b981" stroke="#10b981" stroke-width="2"/>
@@ -635,7 +635,7 @@ svg:`<div class="graph-container"><svg viewBox="0 0 500 350" xmlns="http://www.w
   <text x="295" y="228" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">0,90</text>
   <line x1="224" y1="250" x2="380" y2="300" stroke="#f43f5e" stroke-width="2" marker-end="url(#t6e11arr)"/>
   <circle cx="380" cy="300" r="4" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
-  <text x="273" y="303" fill="#f43f5e" font-size="13" font-family="Inter,sans-serif">H barre</text>
+  <text x="278" y="303" fill="#f43f5e" font-size="13" font-family="Inter,sans-serif"><tspan text-decoration="overline">H</tspan></text>
   <text x="295" y="321" fill="#8b8fa3" font-size="11" font-family="Inter,sans-serif">0,10</text>
 </svg></div>`
 }

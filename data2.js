@@ -594,6 +594,11 @@ correction:["P(A) × P(B) = 0,4 × 0,3 = 0,12.","Comme P(A ∩ B) = 0,12, les é
 statement:`Soit un test de qualité : 80% des pièces sont issues de la machine A, 20% de la B. Defectuosité : A (2%), B (5%).<ol><li>Calcule la probabilité qu'une pièce soit de A ET défectueuse.</li><li>Probabilité totale qu'elle soit défectueuse ?</li></ol>`,
 hints:["P(A ∩ Déf) = P(A) × P_A(Déf)","Ajoute P(B ∩ Déf) pour le total."],
 correction:["P(A ∩ Déf) = 0,80 × 0,02 = <strong>0,016</strong>","P(Déf) = 0,016 + (0,20 × 0,05) = 0,016 + 0,010 = <strong>0,026</strong>"]
+},
+{n:11,title:"Exploitation complète d'un arbre",difficulty:3,type:"applique",
+statement:`Un constructeur se fournit en béton chez deux centrales : 70% chez "Béton Rapide" (BR) et 30% chez "Béton Plus" (BP).<br>Avec BR, 95% des livraisons sont à l'heure (H). Avec BP, 90% sont à l'heure.<ol><li>Complète l'arbre pondéré (au brouillon).</li><li>Calcule la probabilité que la livraison vienne de BR et soit en retard (\\(\\bar{H}\\)).</li><li>Calcule la probabilité totale d'être en retard.</li></ol>`,
+hints:["P(BR) = 0,7. P(H sachant BR) = 0,95 donc P(Retard sachant BR) = 0,05.","Chemin BR puis Retard : multiplie les probabilités.","Retard = (BR ∩ Retard) + (BP ∩ Retard)."],
+correction:["\\(P(\\text{BR} \\cap \\bar{H}) = 0{,}70 \\times 0{,}05 = \\textbf{0,035}\\)","\\(P(\\bar{H}) = (0{,}7 \\times 0{,}05) + (0{,}3 \\times 0{,}10) = 0{,}035 + 0{,}030 = \\textbf{0,065}\\)"]
 }
 ]}
 );

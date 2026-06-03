@@ -6,6 +6,12 @@ const appState = {
   exoNum: null
 };
 
+const StorageManager = {
+  getProgress: () => JSON.parse(localStorage.getItem('livret-progress') || '{}'),
+  setProgress: (data) => localStorage.setItem('livret-progress', JSON.stringify(data)),
+  clearProgress: () => localStorage.removeItem('livret-progress')
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   const prefs = JSON.parse(localStorage.getItem('livret-access') || '{}');
   applyAccessPrefs(prefs);
@@ -57,6 +63,10 @@ function renderView() {
   const navInner = document.getElementById('navInner');
   const progWrap = document.getElementById('progressGlobalWrap');
   
+  main.classList.remove('fade-in');
+  void main.offsetWidth;
+  main.classList.add('fade-in');
+  
   if (appState.view === 'home') {
     hero.style.display = 'block';
     progWrap.style.display = 'block';
@@ -95,7 +105,7 @@ function renderView() {
 
 // === RENDERING HTML ===
 function renderHomeHTML() {
-  const saved = JSON.parse(localStorage.getItem('livret-progress') || '{}');
+  const saved = StorageManager.getProgress();
   let html = `<div class="themes-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px; margin-top:20px;">`;
   
   THEMES.forEach(t => {
@@ -119,7 +129,7 @@ function renderHomeHTML() {
 }
 
 function renderThemeHTML(theme) {
-  const saved = JSON.parse(localStorage.getItem('livret-progress') || '{}');
+  const saved = StorageManager.getProgress();
   const doneCount = theme.exercises.filter(e => saved[`${theme.id}-${e.n}`]).length;
   const pct = Math.round(doneCount / theme.exercises.length * 100);
 
@@ -194,7 +204,7 @@ function renderThemeHTML(theme) {
 
 function renderExerciseHTML(theme, exo) {
   const key = `${theme.id}-${exo.n}`;
-  const saved = JSON.parse(localStorage.getItem('livret-progress') || '{}');
+  const saved = StorageManager.getProgress();
   const isDone = saved[key] || false;
   const diff = exo.difficulty || 1;
   const stars = '★'.repeat(diff) + '☆'.repeat(3 - diff);
@@ -295,9 +305,9 @@ function renderExerciseHTML(theme, exo) {
 
 // === INTERACTIVITY ===
 function toggleExerciseSuccess(key, themeId) {
-  const saved = JSON.parse(localStorage.getItem('livret-progress') || '{}');
+  const saved = StorageManager.getProgress();
   saved[key] = !saved[key];
-  localStorage.setItem('livret-progress', JSON.stringify(saved));
+  StorageManager.setProgress(saved);
   
   const btn = document.getElementById(`successBtn-${key}`);
   const isDone = saved[key];
@@ -341,7 +351,7 @@ function toggleCorrection(key) {
 
 // === PROGRESSION & STATS ===
 function updateGlobalProgress() {
-  const saved = JSON.parse(localStorage.getItem('livret-progress') || '{}');
+  const saved = StorageManager.getProgress();
   const total = THEMES.reduce((s,t) => s + t.exercises.length, 0);
   const done = Object.values(saved).filter(v => v).length;
   const pct = Math.round(done / total * 100);
@@ -353,7 +363,7 @@ function updateGlobalProgress() {
 }
 
 function updateEncouragement() {
-  const saved = JSON.parse(localStorage.getItem('livret-progress') || '{}');
+  const saved = StorageManager.getProgress();
   const done = Object.values(saved).filter(v => v).length;
   const total = THEMES.reduce((s,t) => s + t.exercises.length, 0);
   const pct = Math.round(done / total * 100);
@@ -426,7 +436,7 @@ function setFontSize(delta) {
 
 function resetProgress() {
   if (confirm('Réinitialiser toute la progression ? Cette action est définitive.')) {
-    localStorage.removeItem('livret-progress');
+    StorageManager.clearProgress();
     renderView();
     updateGlobalProgress();
     updateEncouragement();

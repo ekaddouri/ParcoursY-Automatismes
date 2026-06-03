@@ -6,7 +6,7 @@ import urllib.request
 def build():
     print("Building standalone offline HTML...")
     
-    with open('livret.html', 'r', encoding='utf-8') as f:
+    with open('index.html', 'r', encoding='utf-8') as f:
         html = f.read()
 
     # Inline local CSS
@@ -89,6 +89,9 @@ def build():
     )
 
     os.makedirs('Version_Eleves', exist_ok=True)
+    
+    # Remove online visit counter for 100% offline compatibility
+    html = re.sub(r'<div[^>]*>\s*<img src="https://hits\.seeyoufarm\.com[^>]+>\s*</div>', '', html)
     
     output_path = 'Version_Eleves/Livret_Automatismes_HorsLigne.html'
     with open(output_path, 'w', encoding='utf-8') as f:

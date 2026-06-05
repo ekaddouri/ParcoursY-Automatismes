@@ -90,7 +90,8 @@ const ProfileManager = {
     const profile = {
       id, prenom, classe, pinHash, pinSalt,
       progress: {},
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      lastActivity: null
     };
 
     this.profiles.push(profile);
@@ -122,6 +123,9 @@ const ProfileManager = {
       StorageManager.setProgress(profile.progress);
     }
 
+    // Marquer la dernière activité à la connexion
+    this.updateLastActivity(new Date().toISOString());
+
     return true;
   },
 
@@ -133,6 +137,18 @@ const ProfileManager = {
     localStorage.removeItem('parcoursy-active-profile');
   },
 
+  // Mettre à jour la dernière activité du profil connecté
+  async updateLastActivity(timestamp) {
+    if (!this.currentProfile) return;
+    this.currentProfile.lastActivity = timestamp;
+    this._saveLocal();
+    try {
+      await db.collection(COLLECTIONS.profiles).doc(this.currentProfile.id).update({
+        lastActivity: timestamp
+      });
+    } catch (e) { /* mode hors-ligne */ }
+  },
+
   // Sauvegarder la progression du profil actif
   async saveProgress(progressData) {
     if (!this.currentProfile) return;
@@ -141,7 +157,8 @@ const ProfileManager = {
 
     try {
       await db.collection(COLLECTIONS.profiles).doc(this.currentProfile.id).update({
-        progress: progressData
+        progress: progressData,
+        lastActivity: this.currentProfile.lastActivity || new Date().toISOString()
       });
     } catch (e) { console.warn('Sync progression échouée', e); }
   },
@@ -205,6 +222,25 @@ const ProfileManager = {
     return false;
   },
 
+  // Helper : vérifie si une entrée de progression est validée (compatible ancien format boolean)
+  _isDone(val) {
+    if (val === true || val === false) return val;
+    if (val && typeof val === 'object') return !!val.done;
+    return false;
+  },
+
+  // Helper : compte les indices utilisés dans la progression
+  _countHints(progress) {
+    if (!progress) return 0;
+    let c = 0;
+    for (const key of Object.keys(progress)) {
+      if (key === '__meta') continue;
+      const v = progress[key];
+      if (v && typeof v === 'object' && v.hintsUsed) c += v.hintsUsed;
+    }
+    return c;
+  },
+
   // Données pour le dashboard enseignant
   getDashboardData() {
     const studentProfiles = this.profiles.filter(p => !p.isAdmin && !p.isTeacher);
@@ -212,16 +248,17 @@ const ProfileManager = {
 
     return studentProfiles.map(p => {
       const progress = p.progress || {};
-      const done = Object.values(progress).filter(v => v).length;
+      const done = Object.keys(progress).filter(k => k !== '__meta' && this._isDone(progress[k])).length;
       const pct = totalExercises > 0 ? Math.round(done / totalExercises * 100) : 0;
+      const hintsUsed = this._countHints(progress);
 
       // Progression par thème
       const byTheme = THEMES.map(t => {
-        const themeDone = t.exercises.filter(e => progress[`${t.id}-${e.n}`]).length;
+        const themeDone = t.exercises.filter(e => this._isDone(progress[`${t.id}-${e.n}`])).length;
         return { id: t.id, title: t.title, icon: t.icon, done: themeDone, total: t.exercises.length };
       });
 
-      return { id: p.id, prenom: p.prenom, classe: p.classe, done, total: totalExercises, pct, byTheme };
+      return { id: p.id, prenom: p.prenom, classe: p.classe, lastActivity: p.lastActivity, hintsUsed, done, total: totalExercises, pct, byTheme };
     }).sort((a, b) => b.pct - a.pct); // Trier par progression décroissante
   }
 };

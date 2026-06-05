@@ -344,51 +344,53 @@ function renderExerciseHTML(theme, exo) {
 
 // === INTERACTIVITY ===
 function toggleExerciseSuccess(key, themeId) {
-  const saved = StorageManager.getProgress();
-  const now = new Date().toISOString();
-  const existing = isProgressEntryDone(saved[key]) ? saved[key] : null;
+  try {
+    const saved = StorageManager.getProgress();
+    const now = new Date().toISOString();
+    const existing = isProgressEntryDone(saved[key]) ? saved[key] : null;
 
-  if (existing && existing.done) {
-    // Décocher : on supprime l'entrée pour ne pas fausser les stats
-    delete saved[key];
-  } else {
-    // Cocher avec horodatage
-    saved[key] = {
-      done: true,
-      validatedAt: now,
-      hintsUsed: (existing && existing.hintsUsed) || 0,
-      correctionViewed: (existing && existing.correctionViewed) || false
-    };
+    if (existing && existing.done) {
+      delete saved[key];
+    } else {
+      saved[key] = {
+        done: true,
+        validatedAt: now,
+        hintsUsed: (existing && existing.hintsUsed) || 0,
+        correctionViewed: (existing && existing.correctionViewed) || false
+      };
+    }
+    
+    if (ProfileManager.currentProfile) {
+      saved.__meta = { version: 2, updatedAt: now };
+      StorageManager.setProgress(saved);
+      ProfileManager.updateLastActivity(now);
+      ProfileManager.saveProgress(saved);
+    } else {
+      StorageManager.setProgress(saved);
+    }
+    
+    const btn = document.getElementById(`successBtn-${key}`);
+    const isDone = isProgressEntryDone(saved[key]);
+    if (isDone) {
+      btn.style.background = 'var(--success)';
+      btn.style.color = '#fff';
+      btn.style.borderColor = 'var(--success)';
+      btn.style.boxShadow = '0 4px 15px rgba(16,185,129,0.3)';
+      btn.innerHTML = '✅ Validé !';
+    } else {
+      btn.style.background = 'rgba(255,255,255,0.03)';
+      btn.style.color = 'var(--text)';
+      btn.style.borderColor = 'var(--border)';
+      btn.style.boxShadow = 'none';
+      btn.innerHTML = 'Marquer comme réussi';
+    }
+    
+    updateGlobalProgress();
+    updateEncouragement();
+  } catch (e) {
+    console.error(e);
+    alert("Erreur lors de la validation : " + e.message);
   }
-  
-  // Enregistrer l'activité sur le profil
-  if (ProfileManager.currentProfile) {
-    saved.__meta = { version: 2, updatedAt: now };
-    StorageManager.setProgress(saved);
-    ProfileManager.updateLastActivity(now);
-    ProfileManager.saveProgress(saved);
-  } else {
-    StorageManager.setProgress(saved);
-  }
-  
-  const btn = document.getElementById(`successBtn-${key}`);
-  const isDone = isProgressEntryDone(saved[key]);
-  if (isDone) {
-    btn.style.background = 'var(--success)';
-    btn.style.color = '#fff';
-    btn.style.borderColor = 'var(--success)';
-    btn.style.boxShadow = '0 4px 15px rgba(16,185,129,0.3)';
-    btn.innerHTML = '✅ Validé !';
-  } else {
-    btn.style.background = 'rgba(255,255,255,0.03)';
-    btn.style.color = 'var(--text)';
-    btn.style.borderColor = 'var(--border)';
-    btn.style.boxShadow = 'none';
-    btn.innerHTML = 'Marquer comme réussi';
-  }
-  
-  updateGlobalProgress();
-  updateEncouragement();
 }
 
 // Helper : retourne true si la valeur de progression indique "validé"

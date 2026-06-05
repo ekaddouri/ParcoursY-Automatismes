@@ -48,13 +48,52 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderProfilesList();
 });
 
-// === NAVIGATION EN COUCHES ===
+// === NAVIGATION EN COUCHES (HASH ROUTER) ===
+window.addEventListener('hashchange', handleHashChange);
+
+function handleHashChange() {
+  const hash = window.location.hash.replace('#/', '');
+  if (!hash) {
+    appState.view = 'home';
+    appState.themeId = null;
+    appState.exoNum = null;
+  } else {
+    const parts = hash.split('/');
+    if (parts[0] === 'theme' && parts[1]) {
+      const themeId = parseInt(parts[1], 10);
+      if (parts[2] === 'exercice' && parts[3]) {
+        appState.view = 'exercise';
+        appState.themeId = themeId;
+        appState.exoNum = parseInt(parts[3], 10);
+      } else {
+        appState.view = 'theme';
+        appState.themeId = themeId;
+        appState.exoNum = null;
+      }
+    } else {
+      appState.view = 'home';
+    }
+  }
+  
+  if (appState.loggedIn) {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    renderView();
+  }
+}
+
 function navigate(view, themeId = null, exoNum = null) {
-  appState.view = view;
-  appState.themeId = themeId;
-  appState.exoNum = exoNum;
-  window.scrollTo({top: 0, behavior: 'smooth'});
-  renderView();
+  let newHash = '#/';
+  if (view === 'theme') {
+    newHash = `#/theme/${themeId}`;
+  } else if (view === 'exercise') {
+    newHash = `#/theme/${themeId}/exercice/${exoNum}`;
+  }
+  
+  if (window.location.hash === newHash) {
+    handleHashChange();
+  } else {
+    window.location.hash = newHash;
+  }
 }
 
 function renderView() {
@@ -596,7 +635,7 @@ function enterLivret() {
   }
 
   updateGlobalProgress();
-  renderView();
+  handleHashChange(); // Utilise le Hash Router au lieu d'un rendu forcé de l'accueil
   updateEncouragement();
 }
 

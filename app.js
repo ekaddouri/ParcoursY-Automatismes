@@ -60,7 +60,7 @@ function handleHashChange() {
   } else {
     const parts = hash.split('/');
     if (parts[0] === 'theme' && parts[1]) {
-      const themeId = parseInt(parts[1], 10);
+      const themeId = parts[1]; // Les thèmes ont des IDs de type "t1", "t2", etc.
       if (parts[2] === 'exercice' && parts[3]) {
         appState.view = 'exercise';
         appState.themeId = themeId;
@@ -148,7 +148,7 @@ function renderHomeHTML() {
   let html = `<div class="themes-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px; margin-top:20px;">`;
   
   THEMES.forEach(t => {
-    const done = t.exercises.filter(e => saved[`${t.id}-${e.n}`]).length;
+    const done = t.exercises.filter(e => isProgressEntryDone(saved[`${t.id}-${e.n}`])).length;
     const pct = Math.round((done / t.exercises.length) * 100);
     html += `
       <div class="theme-card" onclick="navigate('theme', '${t.id}')" style="background:var(--bg-card); border:1px solid ${t.border}; border-radius:var(--radius); padding:20px; cursor:pointer; transition:transform 0.2s; position:relative; overflow:hidden;">
@@ -169,7 +169,7 @@ function renderHomeHTML() {
 
 function renderThemeHTML(theme) {
   const saved = StorageManager.getProgress();
-  const doneCount = theme.exercises.filter(e => saved[`${theme.id}-${e.n}`]).length;
+  const doneCount = theme.exercises.filter(e => isProgressEntryDone(saved[`${theme.id}-${e.n}`])).length;
   const pct = Math.round(doneCount / theme.exercises.length * 100);
 
   const btsHTML = theme.bts ? `
@@ -244,7 +244,7 @@ function renderThemeHTML(theme) {
 function renderExerciseHTML(theme, exo) {
   const key = `${theme.id}-${exo.n}`;
   const saved = StorageManager.getProgress();
-  const isDone = saved[key] || false;
+  const isDone = isProgressEntryDone(saved[key]);
   const diff = exo.difficulty || 1;
   const stars = '★'.repeat(diff) + '☆'.repeat(3 - diff);
   const exoTypeClass = exo.type || 'automatisme';
@@ -345,16 +345,34 @@ function renderExerciseHTML(theme, exo) {
 // === INTERACTIVITY ===
 function toggleExerciseSuccess(key, themeId) {
   const saved = StorageManager.getProgress();
-  saved[key] = !saved[key];
-  StorageManager.setProgress(saved);
+  const now = new Date().toISOString();
+  const existing = isProgressEntryDone(saved[key]) ? saved[key] : null;
+
+  if (existing && existing.done) {
+    // Décocher : on supprime l'entrée pour ne pas fausser les stats
+    delete saved[key];
+  } else {
+    // Cocher avec horodatage
+    saved[key] = {
+      done: true,
+      validatedAt: now,
+      hintsUsed: (existing && existing.hintsUsed) || 0,
+      correctionViewed: (existing && existing.correctionViewed) || false
+    };
+  }
   
-  // Sync Firebase si profil connecté
+  // Enregistrer l'activité sur le profil
   if (ProfileManager.currentProfile) {
+    saved.__meta = { version: 2, updatedAt: now };
+    StorageManager.setProgress(saved);
+    ProfileManager.updateLastActivity(now);
     ProfileManager.saveProgress(saved);
+  } else {
+    StorageManager.setProgress(saved);
   }
   
   const btn = document.getElementById(`successBtn-${key}`);
-  const isDone = saved[key];
+  const isDone = isProgressEntryDone(saved[key]);
   if (isDone) {
     btn.style.background = 'var(--success)';
     btn.style.color = '#fff';
@@ -373,23 +391,85 @@ function toggleExerciseSuccess(key, themeId) {
   updateEncouragement();
 }
 
+// Helper : retourne true si la valeur de progression indique "validé"
+function isProgressEntryDone(val) {
+  if (val === true || val === false) return val;
+  if (val && typeof val === 'object') return !!val.done;
+  return false;
+}
+
+// Helper : compte le nombre d'exercices validés dans un objet progress
+function countDone(progress) {
+  if (!progress) return 0;
+  let c = 0;
+  for (const key of Object.keys(progress)) {
+    if (key === '__meta') continue;
+    if (isProgressEntryDone(progress[key])) c++;
+  }
+  return c;
+}
+
+// Helper : somme des indices utilisés
+function countHintsUsed(progress) {
+  if (!progress) return 0;
+  let c = 0;
+  for (const key of Object.keys(progress)) {
+    if (key === '__meta') continue;
+    const v = progress[key];
+    if (v && typeof v === 'object' && v.hintsUsed) c += v.hintsUsed;
+  }
+  return c;
+}
+
 function toggleHint(btn, id) {
   const el = document.getElementById('hint-'+id);
   const showing = el.classList.toggle('show');
   btn.classList.toggle('revealed', showing);
   btn.setAttribute('aria-expanded', String(showing));
-  if (showing) renderMath();
+  if (showing) {
+    renderMath();
+    // Enregistrer l'utilisation d'indice dans la progression
+    const saved = StorageManager.getProgress();
+    const now = new Date().toISOString();
+    // id format: "t1-1-0" (themeId-exoNum-hintIndex) => extraire "t1-1"
+    const exoKey = id.replace(/-[^-]+$/, '');
+    if (!saved[exoKey] || typeof saved[exoKey] !== 'object') {
+      const wasDone = isProgressEntryDone(saved[exoKey]);
+      saved[exoKey] = { done: wasDone, validatedAt: wasDone ? (saved[exoKey]?.validatedAt || now) : null, hintsUsed: 0, correctionViewed: false };
+    }
+    saved[exoKey].hintsUsed = (saved[exoKey].hintsUsed || 0) + 1;
+    saved.__meta = { version: 2, updatedAt: now };
+    StorageManager.setProgress(saved);
+    if (ProfileManager.currentProfile) {
+      ProfileManager.updateLastActivity(now);
+      ProfileManager.saveProgress(saved);
+    }
+  }
 }
 
-function toggleCorrection(key) {
-  const el = document.getElementById('corr-'+key);
+function toggleCorrection(exoKey) {
+  // exoKey format: "t1-1" (themeId-exoNum)
+  const el = document.getElementById('corr-'+exoKey);
   const showing = el.classList.toggle('show');
-  const btn = document.getElementById('btn-corr-'+key);
+  const btn = document.getElementById('btn-corr-'+exoKey);
   if (btn) btn.setAttribute('aria-expanded', String(showing));
   if (showing) {
     renderMath();
-    // Scroll a bit down to show correction if needed
     el.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    // Enregistrer la consultation de correction
+    const saved = StorageManager.getProgress();
+    const now = new Date().toISOString();
+    if (!saved[exoKey] || typeof saved[exoKey] !== 'object') {
+      const wasDone = isProgressEntryDone(saved[exoKey]);
+      saved[exoKey] = { done: wasDone, validatedAt: wasDone ? (saved[exoKey]?.validatedAt || now) : null, hintsUsed: 0, correctionViewed: false };
+    }
+    saved[exoKey].correctionViewed = true;
+    saved.__meta = { version: 2, updatedAt: now };
+    StorageManager.setProgress(saved);
+    if (ProfileManager.currentProfile) {
+      ProfileManager.updateLastActivity(now);
+      ProfileManager.saveProgress(saved);
+    }
   }
 }
 
@@ -397,7 +477,7 @@ function toggleCorrection(key) {
 function updateGlobalProgress() {
   const saved = StorageManager.getProgress();
   const total = THEMES.reduce((s,t) => s + t.exercises.length, 0);
-  const done = Object.values(saved).filter(v => v).length;
+  const done = countDone(saved);
   const pct = Math.round(done / total * 100);
   
   const bar = document.getElementById('globalProgress');
@@ -408,7 +488,7 @@ function updateGlobalProgress() {
 
 function updateEncouragement() {
   const saved = StorageManager.getProgress();
-  const done = Object.values(saved).filter(v => v).length;
+  const done = countDone(saved);
   const total = THEMES.reduce((s,t) => s + t.exercises.length, 0);
   const pct = Math.round(done / total * 100);
   const msgs = [
@@ -556,7 +636,7 @@ function renderProfilesList() {
 
   const colors = ['#4f9cf7','#a855f7','#f97316','#10b981','#f43f5e','#eab308'];
   list.innerHTML = filtered.map(p => {
-    const done = p.progress ? Object.values(p.progress).filter(v => v).length : 0;
+    const done = countDone(p.progress);
     const pct = totalExo > 0 ? Math.round(done / totalExo * 100) : 0;
     const color = colors[Math.abs(hashCode(p.prenom || '')) % colors.length];
     const initial = (p.prenom || '?')[0].toUpperCase();
@@ -670,6 +750,21 @@ async function submitTeacherCode() {
   else { document.getElementById('teacherError').textContent = 'Code incorrect.'; }
 }
 
+function timeAgo(dateStr) {
+  if (!dateStr) return '<span style="color:var(--text-dim)">Jamais</span>';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return '<span style="color:var(--success)">À l\'instant</span>';
+  if (mins < 60) return `<span style="color:var(--success)">Il y a ${mins} min</span>`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `<span style="color:var(--t1)">Il y a ${hours}h</span>`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return '<span style="color:var(--t3)">Hier</span>';
+  if (days < 7) return `<span style="color:var(--t3)">Il y a ${days} jours</span>`;
+  if (days < 30) return `<span style="color:var(--warning)">Il y a ${Math.floor(days/7)} sem</span>`;
+  return `<span style="color:var(--t5);font-weight:700">Il y a ${Math.floor(days/30)} mois ⚠️</span>`;
+}
+
 function showDashboard() {
   const screen = document.getElementById('dashboardScreen');
   const data = ProfileManager.getDashboardData();
@@ -688,19 +783,29 @@ function showDashboard() {
       <div class="dashboard-stat"><div class="stat-value" style="color:var(--t3)">${THEMES.reduce((s,t)=>s+t.exercises.length,0)}</div><div class="stat-label">Exercices</div></div>
     </div>
     ${totalStudents === 0 ? '<p style="text-align:center;color:var(--text-muted)">Aucun élève inscrit pour le moment.</p>' : `
-    <table class="dashboard-table">
-      <thead><tr><th>Élève</th><th>Classe</th><th>Progression</th><th>Thèmes</th></tr></thead>
+    <div style="overflow-x:auto">
+    <table class="dashboard-table" style="min-width:800px">
+      <thead><tr>
+        <th>Élève</th>
+        <th>Classe</th>
+        <th>Dernière activité</th>
+        <th>Progression</th>
+        <th>Indices</th>
+        <th>Thèmes</th>
+      </tr></thead>
       <tbody>${data.map(d => `<tr>
         <td><strong>${d.prenom}</strong></td>
         <td>${d.classe || '—'}</td>
+        <td style="white-space:nowrap;font-size:0.85rem">${timeAgo(d.lastActivity)}</td>
         <td><strong>${d.pct}%</strong> (${d.done}/${d.total})</td>
+        <td style="text-align:center;font-size:0.85rem">${d.hintsUsed}</td>
         <td><div class="dashboard-theme-dots">${d.byTheme.map(t => {
           const tPct = t.total > 0 ? Math.round(t.done/t.total*100) : 0;
           const bg = tPct >= 80 ? 'var(--success)' : tPct >= 40 ? 'var(--warning)' : 'var(--border)';
           return `<div class="dashboard-theme-dot" style="background:${bg};color:#fff" title="${t.title}: ${t.done}/${t.total}">${t.icon}</div>`;
         }).join('')}</div></td>
       </tr>`).join('')}</tbody>
-    </table>`}`;
+    </table></div>`}`;
 
   // Afficher le dashboard, masquer le reste
   screen.style.display = '';

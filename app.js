@@ -1,9 +1,10 @@
-// app.js — Moteur du livret d'automatismes (v4 SPA - Navigation en couches)
+// app.js — Moteur du livret d'automatismes (v5 SPA - Profils + Firebase)
 
 const appState = {
   view: 'home', // 'home', 'theme', 'exercise'
   themeId: null,
-  exoNum: null
+  exoNum: null,
+  loggedIn: false
 };
 
 const StorageManager = {
@@ -12,40 +13,39 @@ const StorageManager = {
   clearProgress: () => localStorage.removeItem('livret-progress')
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+let _pendingPinProfileId = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
   const prefs = JSON.parse(localStorage.getItem('livret-access') || '{}');
   applyAccessPrefs(prefs);
   setupTopBtn();
-  updateGlobalProgress();
-  
-  // Initialiser les stats hero
-  const statsEl = document.getElementById('heroStats');
-  if (statsEl) {
-    statsEl.innerHTML = `
-      <div class="hero-stat"><span class="val">${THEMES.length}</span><span class="lbl">Thèmes</span></div>
-      <div class="hero-stat"><span class="val">${THEMES.reduce((s, t) => s + t.exercises.length, 0)}</span><span class="lbl">Exercices</span></div>
-      <div class="hero-stat"><span class="val">150+</span><span class="lbl">Coups de pouce</span></div>
-      <div class="hero-stat"><span class="val">100%</span><span class="lbl">Hors-ligne</span></div>
-    `;
-  }
-  
-  // Navigation clavier pour le mode projection (exercice par exercice)
+
+  // Peupler les selects de classes
+  const filterSelect = document.getElementById('filterClasse');
+  const newClasseSelect = document.getElementById('newClasse');
+  CLASSES_LYCEE.forEach(c => {
+    if (filterSelect) filterSelect.innerHTML += `<option value="${c}">${c}</option>`;
+    if (newClasseSelect) newClasseSelect.innerHTML += `<option value="${c}">${c}</option>`;
+  });
+
+  // Filtres dynamiques
+  document.getElementById('searchProfile')?.addEventListener('input', renderProfilesList);
+  document.getElementById('filterClasse')?.addEventListener('change', renderProfilesList);
+
+  // Navigation clavier
   document.addEventListener('keydown', (e) => {
     if (appState.view === 'exercise') {
-      // Ignorer si l'utilisateur tape dans un champ de texte (pour la suite)
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      if (e.key === 'ArrowRight') {
-        const btn = document.getElementById('btnNextExo');
-        if (btn) btn.click();
-      } else if (e.key === 'ArrowLeft') {
-        const btn = document.getElementById('btnPrevExo');
-        if (btn) btn.click();
-      }
+      if (e.key === 'ArrowRight') document.getElementById('btnNextExo')?.click();
+      else if (e.key === 'ArrowLeft') document.getElementById('btnPrevExo')?.click();
     }
   });
-  
-  renderView();
-  updateEncouragement();
+
+  // Charger profils et compteur
+  await ProfileManager.loadProfiles();
+  ProfileManager.incrementVisits();
+  ProfileManager.listenVisits();
+  renderProfilesList();
 });
 
 // === NAVIGATION EN COUCHES ===
@@ -309,6 +309,11 @@ function toggleExerciseSuccess(key, themeId) {
   saved[key] = !saved[key];
   StorageManager.setProgress(saved);
   
+  // Sync Firebase si profil connecté
+  if (ProfileManager.currentProfile) {
+    ProfileManager.saveProgress(saved);
+  }
+  
   const btn = document.getElementById(`successBtn-${key}`);
   const isDone = saved[key];
   if (isDone) {
@@ -486,3 +491,190 @@ function renderMath() {
     });
   }
 }
+
+// === PROFILS & LOGIN ===
+function renderProfilesList() {
+  const list = document.getElementById('profilesList');
+  if (!list) return;
+  const search = (document.getElementById('searchProfile')?.value || '').toLowerCase();
+  const classe = document.getElementById('filterClasse')?.value || '';
+  const lastUsed = localStorage.getItem('parcoursy-active-profile');
+  const totalExo = THEMES.reduce((s, t) => s + t.exercises.length, 0);
+
+  let filtered = ProfileManager.profiles
+    .filter(p => !search || (p.prenom && p.prenom.toLowerCase().includes(search)))
+    .filter(p => !classe || p.classe === classe)
+    .sort((a, b) => {
+      if (a.id === lastUsed) return -1;
+      if (b.id === lastUsed) return 1;
+      return (a.prenom || '').localeCompare(b.prenom || '');
+    });
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="no-profiles">Aucun profil trouvé. Crée le tien !</div>';
+    return;
+  }
+
+  const colors = ['#4f9cf7','#a855f7','#f97316','#10b981','#f43f5e','#eab308'];
+  list.innerHTML = filtered.map(p => {
+    const done = p.progress ? Object.values(p.progress).filter(v => v).length : 0;
+    const pct = totalExo > 0 ? Math.round(done / totalExo * 100) : 0;
+    const color = colors[Math.abs(hashCode(p.prenom || '')) % colors.length];
+    const initial = (p.prenom || '?')[0].toUpperCase();
+    const isLast = p.id === lastUsed;
+    return `<div class="profile-card ${isLast ? 'last-used' : ''}" onclick="selectProfile('${p.id}')">
+      <div class="profile-avatar" style="background:${color}20;color:${color};border:2px solid ${color}">${initial}</div>
+      <div class="profile-info">
+        <div class="profile-name">${p.prenom}${isLast ? ' ⭐' : ''}</div>
+        <div class="profile-class">${p.classe || ''}</div>
+      </div>
+      <div class="profile-progress">${pct}%</div>
+      ${p.pinHash ? '<span class="profile-lock">🔒</span>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function hashCode(s) { let h = 0; for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i); return h; }
+
+function toggleCreateForm() {
+  const form = document.getElementById('createForm');
+  form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+}
+
+async function handleCreateProfile() {
+  const prenom = document.getElementById('newPrenom')?.value.trim();
+  const classe = document.getElementById('newClasse')?.value;
+  const pin = document.getElementById('newPin')?.value;
+  if (!prenom) { alert('Entre ton prénom !'); return; }
+
+  const profile = await ProfileManager.createProfile(prenom, classe, pin);
+  await ProfileManager.login(profile.id, pin);
+  enterLivret();
+}
+
+async function selectProfile(id) {
+  const profile = ProfileManager.profiles.find(p => p.id === id);
+  if (!profile) return;
+  if (profile.pinHash) {
+    _pendingPinProfileId = id;
+    document.getElementById('pinModalName').textContent = profile.prenom;
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinError').textContent = '';
+    document.getElementById('pinModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('pinInput')?.focus(), 100);
+  } else {
+    await ProfileManager.login(id, '');
+    enterLivret();
+  }
+}
+
+async function submitPin() {
+  const pin = document.getElementById('pinInput')?.value;
+  const ok = await ProfileManager.login(_pendingPinProfileId, pin);
+  if (ok) { closePinModal(); enterLivret(); }
+  else { document.getElementById('pinError').textContent = 'Code incorrect.'; }
+}
+
+function closePinModal() { document.getElementById('pinModal').style.display = 'none'; _pendingPinProfileId = null; }
+
+function skipLogin() { enterLivret(); }
+
+function enterLivret() {
+  appState.loggedIn = true;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('accessBar').style.display = '';
+  document.getElementById('nav').style.display = '';
+  document.getElementById('mainContent').style.display = '';
+  document.getElementById('appFooter').style.display = '';
+  document.querySelector('.print-btn').style.display = '';
+
+  // Badge profil actif
+  const badge = document.getElementById('activeProfileBadge');
+  if (ProfileManager.currentProfile && badge) {
+    badge.style.display = '';
+    badge.innerHTML = `👤 ${ProfileManager.currentProfile.prenom} (${ProfileManager.currentProfile.classe || '—'})`;
+  }
+
+  updateGlobalProgress();
+  renderView();
+  updateEncouragement();
+}
+
+function handleLogout() {
+  ProfileManager.logout();
+  appState.loggedIn = false;
+  document.getElementById('loginScreen').style.display = '';
+  document.getElementById('accessBar').style.display = 'none';
+  document.getElementById('nav').style.display = 'none';
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('progressGlobalWrap').style.display = 'none';
+  document.getElementById('appFooter').style.display = 'none';
+  document.getElementById('dashboardScreen').style.display = 'none';
+  document.querySelector('.print-btn').style.display = 'none';
+  renderProfilesList();
+}
+
+// === ENSEIGNANT ===
+function openTeacherModal() {
+  document.getElementById('teacherCode').value = '';
+  document.getElementById('teacherError').textContent = '';
+  document.getElementById('teacherModal').style.display = 'flex';
+  setTimeout(() => document.getElementById('teacherCode')?.focus(), 100);
+}
+function closeTeacherModal() { document.getElementById('teacherModal').style.display = 'none'; }
+
+async function submitTeacherCode() {
+  const code = document.getElementById('teacherCode')?.value;
+  const level = await ProfileManager.teacherLogin(code);
+  if (level) { closeTeacherModal(); showDashboard(); }
+  else { document.getElementById('teacherError').textContent = 'Code incorrect.'; }
+}
+
+function showDashboard() {
+  const screen = document.getElementById('dashboardScreen');
+  const data = ProfileManager.getDashboardData();
+  const totalStudents = data.length;
+  const avgPct = totalStudents > 0 ? Math.round(data.reduce((s, d) => s + d.pct, 0) / totalStudents) : 0;
+
+  screen.innerHTML = `
+    <div class="dashboard-header">
+      <h2 class="dashboard-title">📊 Tableau de bord enseignant</h2>
+      <button class="dashboard-back-btn" onclick="closeDashboard()">← Retour au livret</button>
+    </div>
+    <div class="dashboard-stats-grid">
+      <div class="dashboard-stat"><div class="stat-value" style="color:var(--t1)">${totalStudents}</div><div class="stat-label">Élèves</div></div>
+      <div class="dashboard-stat"><div class="stat-value" style="color:var(--t4)">${avgPct}%</div><div class="stat-label">Progression moy.</div></div>
+      <div class="dashboard-stat"><div class="stat-value" style="color:var(--t2)">${ProfileManager.visitCount}</div><div class="stat-label">Visites</div></div>
+      <div class="dashboard-stat"><div class="stat-value" style="color:var(--t3)">${THEMES.reduce((s,t)=>s+t.exercises.length,0)}</div><div class="stat-label">Exercices</div></div>
+    </div>
+    ${totalStudents === 0 ? '<p style="text-align:center;color:var(--text-muted)">Aucun élève inscrit pour le moment.</p>' : `
+    <table class="dashboard-table">
+      <thead><tr><th>Élève</th><th>Classe</th><th>Progression</th><th>Thèmes</th></tr></thead>
+      <tbody>${data.map(d => `<tr>
+        <td><strong>${d.prenom}</strong></td>
+        <td>${d.classe || '—'}</td>
+        <td><strong>${d.pct}%</strong> (${d.done}/${d.total})</td>
+        <td><div class="dashboard-theme-dots">${d.byTheme.map(t => {
+          const tPct = t.total > 0 ? Math.round(t.done/t.total*100) : 0;
+          const bg = tPct >= 80 ? 'var(--success)' : tPct >= 40 ? 'var(--warning)' : 'var(--border)';
+          return `<div class="dashboard-theme-dot" style="background:${bg};color:#fff" title="${t.title}: ${t.done}/${t.total}">${t.icon}</div>`;
+        }).join('')}</div></td>
+      </tr>`).join('')}</tbody>
+    </table>`}`;
+
+  // Afficher le dashboard, masquer le reste
+  screen.style.display = '';
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('progressGlobalWrap').style.display = 'none';
+}
+
+function closeDashboard() {
+  document.getElementById('dashboardScreen').style.display = 'none';
+  document.getElementById('mainContent').style.display = '';
+  navigate('home');
+}
+
+// === OVERRIDE toggleExerciseSuccess pour sync Firebase ===
+const _origToggle = typeof toggleExerciseSuccess === 'function' ? toggleExerciseSuccess : null;

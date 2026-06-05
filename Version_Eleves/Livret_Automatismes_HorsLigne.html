@@ -151,7 +151,7 @@ body.cream-mode { --bg:#fbf7e9; --bg-card:#fefcf3; --text:#1a1a1a; --text-muted:
 /* === HERO === */
 .hero { position:relative; padding:50px 40px 40px; overflow:hidden; background:linear-gradient(135deg, #0f1117 0%, #1a1040 50%, #0f1117 100%); }
 body.light-mode .hero, body.cream-mode .hero { background:linear-gradient(135deg, #e8ecf1 0%, #d0d9e8 50%, #e8ecf1 100%); }
-body.light-mode .hero h1, body.cream-mode .hero h1 { -webkit-text-fill-color:#1a1d27; }
+body.light-mode .hero h1, body.cream-mode .hero h1 { color:#1a1d27; -webkit-text-fill-color:#1a1d27; }
 .hero-bg-shapes { position:absolute; inset:0; overflow:hidden; }
 .shape { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.3; }
 .shape-1 { width:400px; height:400px; background:var(--t1); top:-100px; right:-50px; animation:float 8s ease-in-out infinite; }
@@ -162,7 +162,7 @@ body.light-mode .hero h1, body.cream-mode .hero h1 { -webkit-text-fill-color:#1a
 .hero-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); backdrop-filter:blur(10px); padding:6px 18px; border-radius:50px; font-size:0.8rem; font-weight:500; color:var(--t1); border:1px solid rgba(79,156,247,0.2); margin-bottom:20px; }
 .badge-dot { width:6px; height:6px; background:var(--t1); border-radius:50%; animation:pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
-.hero h1 { font-size:2.8rem; font-weight:800; line-height:1.15; margin-bottom:16px; background:linear-gradient(135deg,#fff 0%,#a0aec0 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero h1 { font-size:2.8rem; font-weight:800; line-height:1.15; margin-bottom:16px; background:linear-gradient(135deg,#fff 0%,#a0aec0 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
 .hero-sub { font-size:1.3rem; font-weight:400; opacity:0.7; }
 .hero-desc { color:var(--text-muted); font-size:1rem; max-width:600px; margin-bottom:24px; line-height:1.5; }
 .hero-stats { display:flex; gap:16px; flex-wrap:wrap; }
@@ -340,7 +340,7 @@ body.light-mode .graph-container svg, body.cream-mode .graph-container svg { bac
   body { background:#fff !important; color:#111 !important; font-size:10pt; line-height:1.35 !important; }
   * { color:#111 !important; background:transparent !important; box-shadow:none !important; border-color:#ccc !important; }
   .hero { padding:12px 0; background:#fff !important; }
-  .hero h1 { -webkit-text-fill-color:#111; font-size:18pt; }
+  .hero h1 { color:#111; -webkit-text-fill-color:#111; font-size:18pt; }
   .exercise-body { display:block !important; }
   .exercise-card { page-break-inside:avoid; border:1px solid #ccc; margin-bottom:6px; }
   .theme-section { page-break-before:always; }
@@ -405,7 +405,7 @@ body.light-mode .graph-container svg, body.cream-mode .graph-container svg { bac
     <div class="hero-content">
       <div class="hero-badge"><span class="badge-dot"></span>Terminale Bac Pro Bâtiment</div>
       <h1>Livret d'Automatismes<br><span class="hero-sub">Mathématiques — Préparation BTS</span></h1>
-      <p class="concepteur-text">conçu à l'aide de l'IA par El. Kaddouri Alfred Sauvy 2026</p>
+      <p class="concepteur-text">CONÇU À L'AIDE DE L'IA PAR EL. KADDOURI ALFRED SAUVY 2026</p>
       <p class="hero-desc">Consolider tes acquis en mathématiques pour réussir ta poursuite d'études en BTS Bâtiment. 5 thèmes • 50 exercices progressifs • Coups de pouce • Corrections détaillées.</p>
       
       <div id="heroMsg" class="hero-msg"></div>

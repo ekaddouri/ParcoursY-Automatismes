@@ -53,25 +53,7 @@ Un livret interactif de mathématiques pour consolider les acquis du Bac Pro Bâ
 
 1. Clonez le dépôt
 2. Ouvrez `livret.html` dans un navigateur
-3. (Connexion Internet requise pour KaTeX et les polices)
-
-## 📦 Version élèves (hors-ligne)
-
-Une version autonome du livret — **sans besoin de connexion Internet** — est disponible dans le dossier `Version_Eleves/` :
-
-```
-📁 Version_Eleves/
-   └── livret_eleve.html     # Fichier unique, prêt pour clé USB
-```
-
-Cette version intègre directement :
-- KaTeX (moteur de rendu mathématique)
-- Les polices Inter et JetBrains Mono
-- Tous les graphiques SVG
-
-**→ Ouvrir `Version_Eleves/livret_eleve.html` dans un navigateur pour une utilisation hors-ligne**
-
-> ⚠️ Le fichier pèse environ **2,8 Mo** (contre quelques Ko pour la version CDN).
+3. (Connexion Internet requise pour la base de données Firebase, KaTeX et les polices)
 
 ## 📄 Licence
 

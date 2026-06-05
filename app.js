@@ -774,9 +774,12 @@ function showDashboard() {
   const avgPct = totalStudents > 0 ? Math.round(data.reduce((s, d) => s + d.pct, 0) / totalStudents) : 0;
 
   screen.innerHTML = `
-    <div class="dashboard-header">
-      <h2 class="dashboard-title">📊 Tableau de bord enseignant</h2>
-      <button class="dashboard-back-btn" onclick="closeDashboard()">← Retour au livret</button>
+    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <h2 class="dashboard-title" style="margin:0;">📊 Tableau de bord enseignant</h2>
+      <div style="display:flex; gap:10px;">
+        <button class="dashboard-back-btn" onclick="exportDashboardCSV()" style="background:var(--t4-bg); color:var(--t4); border-color:var(--t4-border);">📥 Exporter CSV</button>
+        <button class="dashboard-back-btn" onclick="closeDashboard()">← Retour au livret</button>
+      </div>
     </div>
     <div class="dashboard-stats-grid">
       <div class="dashboard-stat"><div class="stat-value" style="color:var(--t1)">${totalStudents}</div><div class="stat-label">Élèves</div></div>
@@ -820,6 +823,32 @@ function closeDashboard() {
   document.getElementById('dashboardScreen').style.display = 'none';
   document.getElementById('mainContent').style.display = '';
   navigate('home');
+}
+
+function exportDashboardCSV() {
+  const data = ProfileManager.getDashboardData();
+  if (!data || data.length === 0) return alert("Aucune donnée à exporter.");
+  
+  // En-têtes du CSV (utilisation du point-virgule pour Excel FR)
+  let csv = "Eleve;Classe;Derniere_Activite;Progression_Pct;Exercices_Reussis;Indices_Utilises\n";
+  
+  data.forEach(d => {
+    const lastAct = d.lastActivity ? new Date(d.lastActivity).toLocaleString('fr-FR') : 'Jamais';
+    // Échappement basique des guillemets
+    const prenom = (d.prenom || '').replace(/"/g, '""');
+    const classe = (d.classe || '').replace(/"/g, '""');
+    csv += `"${prenom}";"${classe}";"${lastAct}";${d.pct};"${d.done}/${d.total}";${d.hintsUsed}\n`;
+  });
+  
+  // Forcer l'encodage UTF-8 avec BOM pour Excel
+  const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ParcoursY_Export_${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 // === OVERRIDE toggleExerciseSuccess pour sync Firebase ===

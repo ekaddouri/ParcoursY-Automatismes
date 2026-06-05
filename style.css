@@ -344,7 +344,13 @@ body.light-mode .graph-container svg, body.cream-mode .graph-container svg { bac
   @page { size:A4; margin:12mm 10mm; }
   .no-print, .print-btn, .top-btn, .nav-sticky, .progress-global, .hero-bg-shapes,
   .exercise-toggle, .hint-btn, .correction-btn, .access-bar, .hero-diagnostic,
-  .diag-btns, .login-screen, .pin-modal, .dashboard-screen { display:none !important; }
+  .diag-btns, .login-screen, .pin-modal { display:none !important; }
+  
+  /* Gestion de l'impression normale vs dashboard */
+  body:not(.print-dashboard) .dashboard-screen { display:none !important; }
+  body.print-dashboard .dashboard-screen { display:block !important; color:#111 !important; }
+  body.print-dashboard .main, body.print-dashboard .hero { display:none !important; }
+  
   body { background:#fff !important; color:#111 !important; font-size:10pt; line-height:1.35 !important; }
   * { color:#111 !important; background:transparent !important; box-shadow:none !important; border-color:#ccc !important; }
   .hero { padding:12px 0; background:#fff !important; }

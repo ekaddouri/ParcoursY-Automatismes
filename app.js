@@ -777,6 +777,7 @@ function showDashboard() {
     <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
       <h2 class="dashboard-title" style="margin:0;">📊 Tableau de bord enseignant</h2>
       <div style="display:flex; gap:10px;">
+        <button class="dashboard-back-btn" onclick="printDashboard()" style="background:rgba(255,255,255,0.05); color:var(--text); border-color:var(--border);">🖨️ Imprimer PDF</button>
         <button class="dashboard-back-btn" onclick="exportDashboardCSV()" style="background:var(--t4-bg); color:var(--t4); border-color:var(--t4-border);">📥 Exporter CSV</button>
         <button class="dashboard-back-btn" onclick="closeDashboard()">← Retour au livret</button>
       </div>
@@ -823,6 +824,12 @@ function closeDashboard() {
   document.getElementById('dashboardScreen').style.display = 'none';
   document.getElementById('mainContent').style.display = '';
   navigate('home');
+}
+
+function printDashboard() {
+  document.body.classList.add('print-dashboard');
+  window.print();
+  setTimeout(() => document.body.classList.remove('print-dashboard'), 1000);
 }
 
 function exportDashboardCSV() {

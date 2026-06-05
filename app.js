@@ -805,11 +805,19 @@ function showDashboard() {
         <td style="white-space:nowrap;font-size:0.85rem">${timeAgo(d.lastActivity)}</td>
         <td><strong>${d.pct}%</strong> (${d.done}/${d.total})</td>
         <td style="text-align:center;font-size:0.85rem">${d.hintsUsed}</td>
-        <td><div class="dashboard-theme-dots">${d.byTheme.map(t => {
-          const tPct = t.total > 0 ? Math.round(t.done/t.total*100) : 0;
-          const bg = tPct >= 80 ? 'var(--success)' : tPct >= 40 ? 'var(--warning)' : 'var(--border)';
-          return `<div class="dashboard-theme-dot" style="background:${bg};color:#fff" title="${t.title}: ${t.done}/${t.total}">${t.icon}</div>`;
-        }).join('')}</div></td>
+        <td>
+          <div class="dashboard-theme-dots">${d.byTheme.map(t => {
+            const tPct = t.total > 0 ? Math.round(t.done/t.total*100) : 0;
+            const bg = tPct >= 80 ? 'var(--success)' : tPct >= 40 ? 'var(--warning)' : 'var(--border)';
+            return `<div class="dashboard-theme-dot" style="background:${bg};color:#fff" title="${t.title}: ${t.done}/${t.total}">${t.icon}</div>`;
+          }).join('')}</div>
+          <div class="dashboard-theme-list">
+            ${d.byTheme.filter(t => t.done > 0).map(t => {
+              const tPct = Math.round(t.done/t.total*100);
+              return `<div style="margin-bottom:2px;">${t.icon} <strong>${t.title}</strong> : ${tPct}%</div>`;
+            }).join('') || '<div style="color:#777">Aucun module commencé</div>'}
+          </div>
+        </td>
       </tr>`).join('')}</tbody>
     </table></div>`}`;
 
